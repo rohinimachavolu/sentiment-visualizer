@@ -26,7 +26,7 @@ const KeywordsDisplay = ({ keywords }) => {
     if (displayedKeywords.length > 15) {
       setDisplayedKeywords(prev => prev.slice(-15));
     }
-  }, [keywords]);
+  }, [keywords, displayedKeywords.length]);
 
   return (
     <div className="keywords-display">
