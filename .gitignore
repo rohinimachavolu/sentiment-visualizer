@@ -1,0 +1,76 @@
+# ============================================
+# Environment Variables
+# ============================================
+
+# Backend - ignore ALL .env files EXCEPT .env.example
+backend/.env
+backend/.env.local
+backend/.env.development.local
+backend/.env.test.local
+backend/.env.production.local
+
+# Frontend - ignore ALL .env files EXCEPT .env.example
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# BUT keep .env.example files (they're templates)
+!backend/.env.example
+!frontend/.env.example
+
+# ============================================
+# Python / Backend
+# ============================================
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/pip-log.txt
+backend/pip-delete-this-directory.txt
+
+# ============================================
+# Node / Frontend
+# ============================================
+frontend/node_modules/
+frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+
+# ============================================
+# Testing
+# ============================================
+.coverage
+.pytest_cache/
+*.cover
+*.log
+
+# ============================================
+# IDEs
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============================================
+# OS
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+
+# ============================================
+# Deployment
+# ============================================
+.vercel
+.netlify
