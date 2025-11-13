@@ -246,18 +246,6 @@ const AuraVisualization = ({ sentiment, intensity }) => {
       }
     });
     
-    // Top indicator
-    p5.push();
-    p5.textAlign(p5.CENTER);
-    
-    p5.fill(0, 0, 0, 0.5);
-    p5.noStroke();
-    p5.rect(p5.width/2 - 100, 30, 200, 60, 10);
-    
-    p5.textSize(40);
-    p5.text(currentEmoji, p5.width/2, 60);
-    
-    p5.pop();
   };
 
   const windowResized = (p5) => {
