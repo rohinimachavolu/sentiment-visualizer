@@ -6,7 +6,9 @@ import Controls from './components/Controls';
 import './App.css';
 
 const DEEPGRAM_API_KEY = process.env.REACT_APP_DEEPGRAM_API_KEY || 'YOUR_DEEPGRAM_KEY_HERE';
-const BACKEND_URL = 'http://localhost:8000';
+
+// Use environment variable for backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 
 function App() {
   const [isRecording, setIsRecording] = useState(false);
