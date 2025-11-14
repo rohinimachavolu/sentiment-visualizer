@@ -28,7 +28,6 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 @app.post("/process_text")
 async def process_text(request: TranscriptRequest):
     try:
-        # Add timeout wrapper for Groq API call
         async def call_groq_with_timeout():
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(
@@ -40,22 +39,22 @@ async def process_text(request: TranscriptRequest):
                             "role": "system",
                             "content": """You are an advanced emotion analyzer. Analyze the text and classify it into one of these 9 emotions:
 
-- "sad": feeling down, depressed, unhappy, melancholic, disappointed
-- "happy": feeling joyful, content, pleased, delighted, cheerful
-- "angry": feeling mad, furious, irritated, rage, frustrated
-- "calm": feeling peaceful, relaxed, serene, tranquil, composed
-- "confused": feeling uncertain, bewildered, unclear, puzzled, lost
-- "confident": feeling assured, certain, self-assured, determined, strong
-- "love": feeling affectionate, caring, warm, loving, adoring
-- "surprise": feeling shocked, amazed, astonished, startled, unexpected
-- "fear": feeling scared, anxious, worried, afraid, nervous
+                            - "sad": feeling down, depressed, unhappy, melancholic, disappointed
+                            - "happy": feeling joyful, content, pleased, delighted, cheerful
+                            - "angry": feeling mad, furious, irritated, rage, frustrated
+                            - "calm": feeling peaceful, relaxed, serene, tranquil, composed
+                            - "confused": feeling uncertain, bewildered, unclear, puzzled, lost
+                            - "confident": feeling assured, certain, self-assured, determined, strong
+                            - "love": feeling affectionate, caring, warm, loving, adoring
+                            - "surprise": feeling shocked, amazed, astonished, startled, unexpected
+                            - "fear": feeling scared, anxious, worried, afraid, nervous
 
-Return ONLY valid JSON with no additional text:
-{
-  "emotion": "<one of: sad, happy, angry, calm, confused, confident, love, surprise, fear>",
-  "intensity": <float 0.0-1.0 indicating strength of emotion>,
-  "keywords": [<array of 3-5 most important words>]
-}"""
+                            Return ONLY valid JSON with no additional text:
+                            {
+                            "emotion": "<one of: sad, happy, angry, calm, confused, confident, love, surprise, fear>",
+                            "intensity": <float 0.0-1.0 indicating strength of emotion>,
+                            "keywords": [<array of 3-5 most important words>]
+                            }"""
                         },
                         {
                             "role": "user",
@@ -86,7 +85,6 @@ Return ONLY valid JSON with no additional text:
         
     except asyncio.TimeoutError:
         print(f"⏱️ Groq API timeout after 10s for text: '{request.text}'")
-        # Return default values on timeout
         return {
             "emotion": "calm",
             "intensity": 0.5,

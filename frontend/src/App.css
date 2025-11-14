@@ -36,7 +36,6 @@ body {
   pointer-events: auto;
 }
 
-/* Make sure canvas is visible */
 canvas {
   display: block;
   position: absolute;

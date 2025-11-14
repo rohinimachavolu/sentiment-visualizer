@@ -50,7 +50,7 @@ function App() {
     const text = processingQueueRef.current.shift();
 
     try {
-      // --- BACKEND CONNECTIVITY CHECK ---
+      // BACKEND CONNECTIVITY CHECK
       const backendCheckController = new AbortController();
       const backendCheckTimeout = setTimeout(() => backendCheckController.abort(), 3000);
 
@@ -82,11 +82,11 @@ function App() {
         return;
       }
 
-      // --- LLM PROCESSING WITH TIMEOUTS ---
+      // LLM PROCESSING WITH TIMEOUTS
       const controller = new AbortController();
       let responseReceived = false;
 
-      // --- 5s Warning ---
+      // 5s Warning
       const timeout5 = setTimeout(() => {
         if (!responseReceived) {
           setError("⏳ LLM taking >5 seconds… slow response");
@@ -94,14 +94,14 @@ function App() {
         }
       }, 5000);
 
-      // --- 15s Kill Switch ---
+      // 15s Kill Switch
       const timeout15 = setTimeout(() => {
         if (!responseReceived) {
           controller.abort();
         }
       }, 15000);
 
-      // --- API CALL ---
+      // API CALL
       const response = await fetch(`${BACKEND_URL}/process_text`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -133,7 +133,7 @@ function App() {
     } catch (err) {
       console.error("processing error:", err);
 
-      // --- CHECK ERROR TYPE ---
+      // CHECK ERROR TYPE
       if (err.name === "AbortError") {
         // 15s timeout happened
         setError("❌ LLM timed out (>15s). Recording stopped.");
@@ -281,7 +281,7 @@ function App() {
           setIsRecording(true);
           setConnectionStatus('connected');
 
-          // --- NETWORK MONITOR ---
+          // NETWORK MONITOR
           const monitor = setInterval(() => {
             const offline = !navigator.onLine;
             const wsClosed = ws.readyState !== WebSocket.OPEN;

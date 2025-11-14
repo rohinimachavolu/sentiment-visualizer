@@ -11,12 +11,12 @@ const KeywordsDisplay = ({ keywords }) => {
       setTimeout(() => {
         setDisplayedKeywords(prev => {
           if (prev.find(k => k.text === keyword)) {
-            return prev; // Already exists
+            return prev; 
           }
           return [...prev, {
             text: keyword,
             id: `${keyword}-${Date.now()}-${index}`,
-            delay: index * 0.15 // Stagger delay
+            delay: index * 0.15 
           }];
         });
       }, index * 200); // 200ms delay between each keyword
@@ -74,7 +74,6 @@ const KeywordsDisplay = ({ keywords }) => {
                 transition: { duration: 0.2 }
               }}
               style={{
-                // Random subtle positioning for tag cloud effect
                 marginLeft: `${(index % 3) * 2}px`,
                 marginRight: `${((index + 1) % 3) * 2}px`
               }}

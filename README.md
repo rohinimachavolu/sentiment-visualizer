@@ -484,7 +484,7 @@ On any error, the application ensures consistent state:
 
 **Separation of Concerns:**
 - **Transcription** (Deepgram) works independently from **emotion analysis** (backend)
-- If backend fails: text still appears on screen, and it stops after 10 seconds.
+- If the backend fails, text continues to appear on screen while the app attempts to reconnect and process it for 10 seconds; if unsuccessful, recording automatically stops.
 - App never crashes, always provides user feedback
 - Clean resource cleanup on all error paths
 
