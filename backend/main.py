@@ -18,7 +18,6 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://sentiment-frontend-vppb.onrender.com",
-        "https://*.onrender.com"  # Allow all Render domains
     ],
     allow_credentials=True,
     allow_methods=["*"],
