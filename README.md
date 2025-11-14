@@ -395,6 +395,101 @@ Try saying these phrases to see different visualizations:
 
 ---
 
+## Async Management
+
+The application handles asynchronous operations carefully to ensure smooth recording, real-time transcription, and AI processing:
+
+### 1. `async/await`
+
+All network requests, including communication with the backend AI processing API (`/process_text`), are handled with `async/await` for predictable sequencing.
+
+
+### 2. Timed Operations
+
+- **5-second slow response warning:** Shows a message if AI processing exceeds 5 seconds
+- **15-second timeout:** Automatically aborts the request if processing takes longer than 15 seconds
+- **10-second backend wait:** Before disconnecting on backend failure, the app waits 10 seconds to allow transient network issues to resolve
+
+### 3. Media & WebSocket Monitoring
+
+- A background interval monitors network connectivity and WebSocket state
+- Stops recording if connection is lost, preventing unintended behavior
+- Monitors every 800ms for real-time detection
+
+### 4. Processing Queue Management
+
+- Incoming transcripts are queued and processed sequentially to avoid race conditions
+- Queue processing is paused if already handling an item (`isProcessingRef`) and resumes automatically once ready
+- 500ms delay between requests prevents overwhelming the backend
+
+---
+
+## Error Handling
+
+Robust error handling ensures the app recovers gracefully from failures:
+
+### 1. Backend/API Errors
+
+- Catches HTTP failures and aborted fetches
+- Provides user feedback for connection issues, timeouts, and other backend failures
+- Pre-flight health check (`/health` endpoint) before processing
+
+### 2. Timeout & Abort Handling
+
+- `AbortController` is used to cancel slow requests after 15 seconds
+- On timeout, recording is safely stopped and the user is informed
+- Backend-side timeout: Groq API calls limited to 10 seconds
+
+### 3. MediaRecorder & WebSocket Errors
+
+- Handles errors while starting/stopping the microphone or WebSocket connections
+- On failure, shows an error message and cleans up all resources
+- Specific error messages for different microphone issues:
+  - `NotAllowedError`: Permission denied
+  - `NotFoundError`: No microphone found
+  - `NotReadableError`: Microphone in use by another app
+
+### 4. Frontend State Reset
+
+On any error, the application ensures consistent state:
+- Stops recording (`setIsRecording(false)`)
+- Updates connection status (`setConnectionStatus("disconnected")`)
+- Clears processing queue and timers
+- Resets emotion and intensity to defaults if AI processing fails
+- Cleans up WebSocket, MediaRecorder, and media stream tracks
+
+### 5. User-Friendly Notifications
+
+- Error messages are displayed temporarily and cleared after 3-5 seconds to maintain UI clarity
+- Visual feedback with icons (⏳, ❌, 🔌, 🎤)
+- Processing indicator shows when backend is analyzing
+- Connection status indicator shows when actively connected
+
+---
+
+## Error Scenarios Handled
+
+| Scenario | Detection | User Feedback | Recovery |
+|----------|-----------|---------------|----------|
+| Backend timeout (>15s) | AbortController | "LLM timed out (>15s)" | Auto-stop, manual restart |
+| Backend offline | Health check fails | "Backend not connected" | Auto-stop after 10s |
+| Slow API (5-15s) | Timer at 5s | Warning message | Continues normally |
+| WiFi disconnect | Network monitor (800ms) | "Lost connection" | Auto-stop, manual restart |
+| Mic access denied | NotAllowedError | "Access denied" | User enables permissions |
+| WebSocket error | ws.onerror | Connection error | Auto-stop |
+
+---
+
+## Graceful Degradation
+
+**Separation of Concerns:**
+- **Transcription** (Deepgram) works independently from **emotion analysis** (backend)
+- If backend fails: text still appears on screen, and it stops after 10 seconds.
+- App never crashes, always provides user feedback
+- Clean resource cleanup on all error paths
+
+---
+
 ## Performance Considerations
 
 - **Frame Rate:** Targets 60 FPS
