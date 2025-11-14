@@ -1,4 +1,5 @@
 # Real-Time Emotion Visualization with Perlin Noise
+**Author : Rohini Machavolu**
 
 A full-stack web application that performs real-time audio transcription and visualizes the speaker's emotional state through dynamic Perlin noise-based wave animations. The visualization smoothly transitions between 9 distinct emotions, each with unique wave patterns, colors, and characteristics.
 
@@ -412,14 +413,6 @@ Try saying these phrases to see different visualizations:
 - Microphone access requires HTTPS (except localhost)
 - Best performance in Chrome/Edge browsers
 - Emotion detection accuracy depends on AI model and speech clarity
-
----
-
-## Author
-
-**Rohini Machavolu**
-- GitHub: [@rohinimachavolu](https://github.com/rohinimachavolu)
-- Project: [sentiment-visualizer](https://github.com/rohinimachavolu/sentiment-visualizer)
 
 ---
 
