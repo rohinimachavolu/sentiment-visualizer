@@ -13,11 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://sentiment-frontend-vppb.onrender.com",
-        "https://*.onrender.com"  # Allow all Render domains
-    ],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,24 +22,33 @@ app.add_middleware(
 class TranscriptRequest(BaseModel):
     text: str
 
-# Initialize Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 @app.post("/process_text")
 async def process_text(request: TranscriptRequest):
     try:
-        # Use Groq API
         chat_completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",  # Fast and good quality
+            model="llama-3.3-70b-versatile",
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a sentiment analyzer. Return ONLY valid JSON with no additional text or markdown.
-The JSON must have this exact structure:
+                    "content": """You are an advanced emotion analyzer. Analyze the text and classify it into one of these 9 emotions:
+
+- "sad": feeling down, depressed, unhappy, melancholic, disappointed
+- "happy": feeling joyful, content, pleased, delighted, cheerful
+- "angry": feeling mad, furious, irritated, rage, frustrated
+- "calm": feeling peaceful, relaxed, serene, tranquil, composed
+- "confused": feeling uncertain, bewildered, unclear, puzzled, lost
+- "confident": feeling assured, certain, self-assured, determined, strong
+- "love": feeling affectionate, caring, warm, loving, adoring
+- "surprise": feeling shocked, amazed, astonished, startled, unexpected
+- "fear": feeling scared, anxious, worried, afraid, nervous
+
+Return ONLY valid JSON with no additional text:
 {
-  "sentiment": <float between -1.0 (very negative) and 1.0 (very positive)>,
-  "intensity": <float between 0.0 (calm/neutral) and 1.0 (very intense/emotional)>,
-  "keywords": [<array of 2-5 most important words or short phrases that actually effects the sentiment>]
+  "emotion": "<one of: sad, happy, angry, calm, confused, confident, love, surprise, fear>",
+  "intensity": <float 0.0-1.0 indicating strength of emotion>,
+  "keywords": [<array of 3-5 most important words>]
 }"""
                 },
                 {
@@ -53,18 +58,15 @@ The JSON must have this exact structure:
             ],
             temperature=0.3,
             max_tokens=200,
-            response_format={"type": "json_object"}  # Groq supports JSON mode!
+            response_format={"type": "json_object"}
         )
         
         response_text = chat_completion.choices[0].message.content
-        
-        # Parse JSON response
         result = json.loads(response_text)
         
-        # DEBUG: Print what we're sending back
-        print(f"Backend sending: Sentiment={result.get('sentiment')}, Intensity={result.get('intensity')}, Keywords={result.get('keywords')}")
+        print(f"Backend sending: Emotion={result.get('emotion')}, Intensity={result.get('intensity')}, Keywords={result.get('keywords')}")
         
-        if not all(key in result for key in ["sentiment", "intensity", "keywords"]):
+        if not all(key in result for key in ["emotion", "intensity", "keywords"]):
             raise ValueError("Invalid response structure")
         
         return result
@@ -72,7 +74,7 @@ The JSON must have this exact structure:
     except Exception as e:
         print(f"Error processing text: {str(e)}")
         return {
-            "sentiment": 0.0,
+            "emotion": "calm",
             "intensity": 0.5,
             "keywords": ["error"],
             "error": str(e)

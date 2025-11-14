@@ -6,7 +6,7 @@ const KeywordsDisplay = ({ keywords }) => {
   const [displayedKeywords, setDisplayedKeywords] = useState([]);
   
   useEffect(() => {
-    // Stagger keyword appearance - fade in one by one
+
     keywords.forEach((keyword, index) => {
       setTimeout(() => {
         setDisplayedKeywords(prev => {

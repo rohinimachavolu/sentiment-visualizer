@@ -6,14 +6,12 @@ import Controls from './components/Controls';
 import './App.css';
 
 const DEEPGRAM_API_KEY = process.env.REACT_APP_DEEPGRAM_API_KEY || 'YOUR_DEEPGRAM_KEY_HERE';
-
-// Use environment variable for backend URL
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = 'http://localhost:8000';
 
 function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState([]);
-  const [sentiment, setSentiment] = useState(0);
+  const [emotion, setEmotion] = useState('calm'); // Changed from sentiment
   const [intensity, setIntensity] = useState(0.5);
   const [keywords, setKeywords] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,6 +30,7 @@ function App() {
 
     isProcessingRef.current = true;
     setIsProcessing(true);
+
     const text = processingQueueRef.current.shift();
 
     try {
@@ -52,14 +51,14 @@ function App() {
       }
 
       const aiData = await response.json();
+      
+      // Debug logs
       console.log('📥 Frontend received from backend:', aiData);
-      console.log('📊 Current sentiment:', sentiment, '→ New:', aiData.sentiment);
-      console.log('⚡ Current intensity:', intensity, '→ New:', aiData.intensity);
+      console.log('📊 Emotion:', aiData.emotion, 'Intensity:', aiData.intensity);
       
-      setSentiment(prev => prev * 0.7 + aiData.sentiment * 0.3);
-      
-      setSentiment(prev => prev * 0.7 + aiData.sentiment * 0.3);
-      setIntensity(prev => prev * 0.7 + aiData.intensity * 0.3);
+      // Update state with new emotion data
+      setEmotion(aiData.emotion || 'calm');
+      setIntensity(prev => prev * 0.7 + (aiData.intensity || 0.5) * 0.3);
       
       if (aiData.keywords && aiData.keywords.length > 0) {
         setKeywords(prev => {
@@ -163,7 +162,7 @@ function App() {
   return (
     <div className="app">
       <AuraVisualization 
-        sentiment={sentiment} 
+        emotion={emotion}
         intensity={intensity}
         keywords={keywords}
       />
